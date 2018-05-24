@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- 基于xml文件配置AOP -->
+	<bean id="userDao" class="org.rone.study.spring.aop.xml.UserDao" />
+	<bean id="daoAspect" class="org.rone.study.spring.aop.xml.DaoAspect" />
+	
+	<!-- 切面配置 -->
+	<aop:config>
+		<!-- 
+			定义一个切点
+			expression：说明哪些方法需要切入该切面点；
+			id：唯一标识，用于切面引用；
+		 -->
+		<aop:pointcut expression="execution(* org.rone.study.spring.aop.xml.*.*(..))" id="daoCut"/>
+		<!-- 
+			定义具体的切面实现
+			ref：具体使用哪个切面类；
+			order：当有多个切面时，定义切面的循序，值越小越优先；
+		 -->
+		<aop:aspect ref="daoAspect" order="0">
+			<!-- 
+				具体的通知(执行的方法)
+					method：指明具体的方法名；
+					pointcut-ref：指明使用的切点；
+				<aop:before>：前置通知，
+				<aop:after>：后置通知；
+				<aop:after-returning>：返回通知，returning 指明返回变量名；
+				<aop:after-throwing>：异常通知，throwing 指明返回的异常变量名；
+				<aop:around>：环绕通知；
+			 -->
+			<aop:before method="beforeMethod" pointcut-ref="daoCut"/>
+			<aop:after method="afterMethod" pointcut-ref="daoCut"/>
+			<aop:after-returning method="afterReturnning" 
+				pointcut-ref="daoCut" returning="result"/>
+		</aop:aspect>
+	</aop:config>
+
+</beans>

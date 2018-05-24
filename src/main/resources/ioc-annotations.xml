@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    
+    <!-- 
+    	使用注解的方式配置Bean
+    	1.使用 <context:component-scan> 标注需要扫描的注解包；
+    		base-package:需要扫描的基包，在该包下的子包都会扫描，支持*、?通配符;
+    	2.在Class 中使用如下的注解来标识需要扫描的类，可在注解后面用()表明Bean的id值，默认为类名的首字母小写
+    		@Component: 基本注解, 标识了一个受 Spring 管理的组件;
+			@Respository: 标识持久层组件;
+			@Service: 标识服务层(业务层)组件;
+			@Controller: 标识表现层组件;
+		3.在Class 中使用 @Autowired 和 @Resource 来实现Bean之间的依赖关系
+			 @Autowired：自动装配具有兼容类型的单个 Bean属性，
+			 	required: 表明是否必须匹配(默认true)，
+			 	@Qualifier: 当有多个兼容类型的Bean 时可用该注解表明具体的Bean名称，
+			 	使用在Arrays 和List上时自动装配所有兼容的Bean，
+			 	使用在Map上时，key=Bean名称，value=Bean；
+			 @Resource: 注解要求提供一个 Bean 名称的属性，若该属性为空，则自动采用标注处的变量或方法名作为 Bean 的名称；
+     -->
+    <context:component-scan base-package="org.rone.study.spring.ioc.annotations" />
+    
+</beans>

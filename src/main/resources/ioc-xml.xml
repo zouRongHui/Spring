@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-4.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    
+    <!-- 
+		id:用来标识该bean;
+		name:;
+		class:bean全类名;
+		lazy-init:延迟加载，default(默认值):使用全局的默认方案、
+			flase:在容器实例化时就实例化该bean，
+			true:延迟加载即获取该bean实例时才实例化;
+		autowire:自动装配其他Bean，默认不使用，
+			byName:根据Bean的属性名和id相匹配,byType:根据Class来匹配(只能有一个实例);
+		parent:用来实现配置的继承;
+		abstract:用来该Bean是否是模板(供其他Bean去继承实现配置的共享)，模板Bean不能实例化，默认false;
+		depends-on:表明依赖关系，即要想实例本Bean，依赖Bean必须首先创立，多个时用逗号或空格隔开;
+		scope:作用域，常见singleton、prototype，
+			singleton:在该容器中只会有一个实例,
+			prototype:在该容器中没调用一次产生一个新的实例;
+		init-method:指定初始化方法，在实例化时就会初始化;
+		destory-method:指定销毁方法;
+			Bean的生命周期：
+				1. 通过构造器或工厂方法创建 Bean 实例
+				2. 为 Bean 的属性设置值和对其他 Bean 的引用
+				3. 将 Bean 实例传递给 Bean 后置处理器的 postProcessBeforeInitialization 方法
+				4. 调用 Bean 的初始化方法
+				5. 将 Bean 实例传递给 Bean 后置处理器的 postProcessAfterInitialization方法
+				6. Bean 可以使用了
+				7. 当容器关闭时, 调用 Bean 的销毁方法
+								
+	-->
+	<!-- 使用 setter 实现 -->
+    <bean id="person" class="org.rone.study.spring.ioc.Person" lazy-init="true"
+          init-method="init" destroy-method="destory">
+    	<!-- 
+   			name:对应的属性名，实际为setter方法后面紧接的字符;
+   			value:要赋值的值;
+   			ref:;要赋值的引用，其他bean的id值;
+   		 -->
+    	<property name="name" value="rone" />
+    	<property name="age" value="23" />
+    	<!-- 
+    	<property name="phone" ref="phone" />
+    	 -->
+    	<property name="phone">
+    		<!-- 内部Bean，只能在此使用，所以无需设置id/name属性 -->
+    		<bean class="org.rone.study.spring.ioc.Phone">
+		    	<property name="name" value="P10" />
+		    	<property name="brand" value="huawei" />
+		    	<!-- 设置 NULL 值 -->
+		    	<property name="price"><null/></property>
+		    </bean>
+    	</property>
+        <!-- 支持级联属性赋值 -->
+        <property name="phone.price" value="4399.00" />
+    	<property name="lovers">
+    		<!-- list集合类型，内部实现 -->
+    		<list>
+    			<value>myself</value>
+    			<value>father</value>
+    			<value>mother</value>
+    			<!-- 
+    			<ref bean="" />
+    			 -->
+    		</list>
+    	</property>
+    	<property name="experience" ref="experience" />
+    </bean>
+    
+    <!-- 使用 constructor 实现 -->
+    <bean id="phone" class="org.rone.study.spring.ioc.Phone" lazy-init="true">
+    	<!-- 
+   			value:要赋值的值;
+   			ref:要赋值的引用，其他bean的id值;
+   			index:该值在构造器的参数列表索引值，默认的循序从上往下从0开始;
+   			type:该值的类型，用于实现重载，可不定义;
+   			name:参数名，用于实现重载，可不定义;
+   		 -->
+    	<constructor-arg value="M6" index="0" type="java.lang.String" name="name" />
+    	<constructor-arg value="xiaomi" index="1" type="java.lang.String" name="brand" />
+    	<constructor-arg value="2499.00" index="2" type="java.lang.Double" name="price" />
+    </bean>
+    
+    <!-- 
+    	使用 util schema 里的集合标签定义独立的集合 Bean 
+    	首先要在 <beans> 根元素里添加 util schema 定义
+    		xmlns:util="http://www.springframework.org/schema/util"
+    		xsi:schemaLocation="http://www.springframework.org/schema/util
+    			http://www.springframework.org/schema/util/spring-util-4.0.xsd"
+     -->
+    <util:map id="experience">
+    	<entry key="past" value="dongtai" />
+    	<entry key="now" value="suzhou" />
+    	<entry key="future" value="hangzhou" />
+    	<!-- 
+    	<entry key-ref="" value-ref="" />
+    	 -->
+    </util:map>
+    
+    <!-- 使用 p 命名空间，简化代码，引用其他 Bean 时：P:属性-ref="" -->
+    <bean id="iPhone" class="org.rone.study.spring.ioc.Phone" p:name="iPhone X" p:brand="Apple" p:price="8388" lazy-init="true" />
+    
+    <!-- 配置的继承 -->
+    <bean id="mix2-s" parent="phone" lazy-init="true">
+    	<property name="name" value="Mix2-s" />
+    </bean>
+    
+    <!-- 使用外部属性文件来配置 -->
+    <!-- 
+    	首先通过 <context:property-placeholder> 标签引入配置文件；
+    	然后使用${}来获取相应的值
+     -->
+    <context:property-placeholder location="classpath:/data.properties"/>
+    <bean id="oppo" class="org.rone.study.spring.ioc.Phone" lazy-init="true">
+    	<property name="name" value="${name}" />
+    	<property name="brand" value="${brand}" />
+    	<property name="price" value="${price}" />
+    </bean>
+    
+    <!-- 
+    	SpEL: 可以为属性进行动态的赋值
+    	语法： #{}
+    	1. 用来获取别的Bean的属性和方法；
+    	2. 支持常用的运算符；
+    	3. 支持三目运算符(? :)；
+    	4. 调用静态方法或静态属性；
+     -->
+     <bean id="vivo" class="org.rone.study.spring.ioc.Phone" lazy-init="true">
+     	<property name="name" value="#{'vivo' + ' X11'}" />
+     	<property name="brand" value="#{oppo.brand}" />
+     	<property name="price" value="#{3000 + (T(java.lang.Math).random() * 100)}" />
+     </bean>
+     
+     <!-- 配置Bean后置处理器，针对该容器的所有Bean -->
+     <bean class="org.rone.study.spring.ioc.MyBeanPostProcessor" />
+     
+     <!-- 
+     	使用工厂方法来配置
+     	factory:工厂实例，静态工厂模式无需此属性;
+     	factory-method:相对的工厂方法;
+      -->
+     <!-- 使用静态工厂方法 -->
+     <bean id="nokia" class="org.rone.study.spring.ioc.Factory" factory-method="getStaticInstance" lazy-init="true">
+     	<!-- 通过<constructor-arg>来传递参数 -->
+     	<constructor-arg value="NOKIA" />
+     </bean>
+     
+     <!-- 使用实例工厂方法 -->
+     <!-- 创建工厂实例 -->
+     <bean id="factory" class="org.rone.study.spring.ioc.Factory" />
+     <!-- 配置实例 -->
+     <bean id="blackBerry" class="org.rone.study.spring.ioc.Phone"
+     	factory-bean="factory" factory-method="getInstance" lazy-init="true">
+     	<constructor-arg value="BlackBerry" />
+     </bean>
+     
+     <!-- 
+     	使用spring提供的FactoryBean 接口来配置
+     	class:指定实现了FactoryBean 的类;
+     	<property>:给FactoryBean 的实现类配置属性值;
+     	实例是FactoryBean 的getObject() 的返回值
+     	 -->
+     <bean id="samsung" class="org.rone.study.spring.ioc.PhoneFactoryBean" lazy-init="true">
+     	<property name="name" value="samsung" />
+     </bean>
+
+</beans>
