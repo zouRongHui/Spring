@@ -42,11 +42,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceAspect {
 	
-	@Pointcut("execution(* com.aop.annotations.*.*(..))")
+	@Pointcut("execution(* org.rone.study.spring.aop.annotations.*.*(..))")
 	public void demoCut() {}
 	
 	@Before("demoCut()")
-//	@Before("execution(* com.aop.annotations.*.*(..))")
+//	@Before("execution(* org.rone.study.spring.aop.annotations.*.*(..))")
 	public void beforeMethod(JoinPoint joinPoint) {
 		String methodName = joinPoint.getSignature().getName();
 		Object [] args = joinPoint.getArgs();
