@@ -13,7 +13,7 @@
 		class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="user" value="root"></property>
 		<property name="password" value="root"></property>
-		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/test"></property>
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/rone_test"></property>
 		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
 
 		<property name="initialPoolSize" value="5"></property>
