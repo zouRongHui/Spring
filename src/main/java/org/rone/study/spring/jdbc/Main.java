@@ -51,6 +51,7 @@ public class Main {
 		
 		//NamedParameterJdbcTemplate 可使用具名参数，便于代码维护
 //		NamedParameterJdbcTemplate namedParameterJdbcTemplate = context.getBean(NamedParameterJdbcTemplate.class);
+//		//namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);//也可以这样来获取具名参数模板
 //		sql = "UPDATE employee SET name = :name WHERE id = :id";
 //		Map<String, Object> paramMap = new HashMap<>(2);
 //		paramMap.put("name", "King");
