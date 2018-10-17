@@ -1,5 +1,7 @@
 package org.rone.study.spring.ioc.annotations;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,19 @@ public class Main {
 
 @Component("employee")
 class Employee {
+
+	//指定初始化方法，在实例化时就会初始化;
+	@PostConstruct
+	private void init() {
+		System.out.println(Employee.class + " init.....");
+	}
+
+	//指定销毁方法;
+	@PreDestroy
+	private void destroy() {
+		System.out.println(Employee.class + " destroy...........");
+	}
+
 	public void show() {System.out.println("Employee show..");}
 }
 
