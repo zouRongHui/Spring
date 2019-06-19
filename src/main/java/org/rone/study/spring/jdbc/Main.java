@@ -23,10 +23,10 @@ public class Main {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) context.getBean("jdbcTemplate");
 		
 		//JdbcTemplate 查询单个结果
-		sql = "SELECT * FROM employee WHERE id = ?";
-		RowMapper<Employee> rowMapper = new BeanPropertyRowMapper<>(Employee.class);
-		Employee employee = jdbcTemplate.queryForObject(sql, rowMapper, 1);
-		System.out.println(employee);
+//		sql = "SELECT * FROM employee WHERE id = ?";
+//		RowMapper<Employee> rowMapper = new BeanPropertyRowMapper<>(Employee.class);
+//		Employee employee = jdbcTemplate.queryForObject(sql, rowMapper, 1);
+//		System.out.println(employee);
 		
 		//JdbcTemplate 多个结果的查询
 //		sql = "SELECT * FROM employee";
@@ -50,7 +50,7 @@ public class Main {
 //		System.out.println("Count: " + count);
 		
 		//NamedParameterJdbcTemplate 可使用具名参数，便于代码维护
-//		NamedParameterJdbcTemplate namedParameterJdbcTemplate = context.getBean(NamedParameterJdbcTemplate.class);
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = context.getBean(NamedParameterJdbcTemplate.class);
 //		//namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);//也可以这样来获取具名参数模板
 //		sql = "UPDATE employee SET name = :name WHERE id = :id";
 //		Map<String, Object> paramMap = new HashMap<>(2);
@@ -63,6 +63,17 @@ public class Main {
 //		Employee newEmployee = new Employee("Queen", "Queen@foxmail.com");
 //		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(newEmployee);
 //		namedParameterJdbcTemplate.update(sql, paramSource);
+
+		//在spring jdbcTemplate中使用in时，需要使用NamedParameterJdbcTemplate具名的参数来查询
+		sql = "select * from employee where id in (:ids)";
+		List<Integer> ids = new ArrayList<>(3);
+		ids.add(1);
+		ids.add(2);
+		ids.add(3);
+		Map<String, Object> paramMap = new HashMap<>(1);
+		paramMap.put("ids", ids);
+		List<Employee> employeeList = namedParameterJdbcTemplate.query(sql, paramMap, new BeanPropertyRowMapper<>(Employee.class));
+		employeeList.forEach(e -> System.out.println(e));
 		
 		((AbstractApplicationContext)context).close();
 	}
